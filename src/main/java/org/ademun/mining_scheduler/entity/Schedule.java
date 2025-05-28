@@ -29,7 +29,7 @@ import org.hibernate.proxy.HibernateProxy;
 public class Schedule {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", nullable = false)
   private UUID id;
   @Column(name = "week", nullable = false)

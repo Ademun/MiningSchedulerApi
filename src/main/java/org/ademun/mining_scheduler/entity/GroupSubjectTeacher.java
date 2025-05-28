@@ -20,7 +20,7 @@ import org.ademun.mining_scheduler.entity.type.LessonType;
 public class GroupSubjectTeacher {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", nullable = false)
   private UUID id;
 

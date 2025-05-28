@@ -21,7 +21,7 @@ import org.ademun.mining_scheduler.entity.type.LessonType;
 public class Lesson {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", nullable = false)
   private UUID id;
   @Column(name = "start_time", nullable = false)

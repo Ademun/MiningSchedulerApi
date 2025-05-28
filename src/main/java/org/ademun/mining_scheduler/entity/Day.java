@@ -29,7 +29,7 @@ import org.hibernate.proxy.HibernateProxy;
 public class Day {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", nullable = false)
   private UUID id;
   @Column(name = "day_of_week", nullable = false)

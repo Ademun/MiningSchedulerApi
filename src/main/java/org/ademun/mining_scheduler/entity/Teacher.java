@@ -5,29 +5,25 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-import lombok.ToString.Exclude;
 import org.hibernate.proxy.HibernateProxy;
 
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Entity
 @Table(name = "teacher")
 public class Teacher {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", nullable = false)
   private UUID id;
   @Column(name = "name", nullable = false)
@@ -37,12 +33,12 @@ public class Teacher {
   @Column(name = "patronymic", nullable = false)
   private String patronymic;
 
-  @ManyToMany(mappedBy = "teachers")
-  @Exclude
-  private Set<Subject> subjects = new LinkedHashSet<>();
+  @ManyToOne
+  @JoinColumn(name = "subject_id")
+  private Subject subject;
 
   public String getFullName() {
-    return name + " " + surname + " " + patronymic;
+    return String.format("%s %s %s", name, surname, patronymic);
   }
 
   @Override
