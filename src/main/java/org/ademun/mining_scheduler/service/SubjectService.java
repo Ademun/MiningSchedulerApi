@@ -22,7 +22,6 @@ public interface SubjectService {
 
   List<Teacher> getTeachers(UUID id) throws ResourceNotFoundException;
 
-  //TODO: Add check if teacher already exists
   void addTeacher(UUID id, Teacher teacher)
       throws ResourceNotFoundException, ResourceAlreadyExistsException;
 
