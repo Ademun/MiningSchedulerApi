@@ -46,8 +46,7 @@ public class SubjectServiceImpl implements SubjectService {
 
   @Override
   public void delete(UUID id) throws ResourceNotFoundException, ResourceIsBeingUsedException {
-    Subject subject = subjectRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("No such subject"));
+    Subject subject = findById(id);
     if (!subject.getTeachers().isEmpty()) {
       throw new ResourceIsBeingUsedException("Cant delete a subject with teachers");
     }
@@ -56,16 +55,14 @@ public class SubjectServiceImpl implements SubjectService {
 
   @Override
   public List<Teacher> getTeachers(UUID id) throws ResourceNotFoundException {
-    return subjectRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("No such subject")).getTeachers().stream()
+    return findById(id).getTeachers().stream()
         .toList();
   }
 
   @Override
   @Transactional
   public void addTeacher(UUID id, Teacher teacher) throws ResourceNotFoundException {
-    Subject subject = subjectRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("No such subject"));
+    Subject subject = findById(id);
     subject.getTeachers().add(teacher);
     teacher.setSubject(subject);
     subjectRepository.save(subject);
@@ -74,12 +71,12 @@ public class SubjectServiceImpl implements SubjectService {
   @Override
   @Transactional
   public void removeTeacher(UUID id, UUID teacherId) throws ResourceNotFoundException {
-    Subject subject = subjectRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("No such subject"));
-    Teacher teacher = subject.getTeachers().stream().filter(t -> t.getId().equals(teacherId))
+    Subject subject = findById(id);
+    Teacher remove = subject.getTeachers().stream()
+        .filter(teacher -> teacher.getId().equals(teacherId))
         .findFirst().orElseThrow(() -> new ResourceNotFoundException("No such teacher"));
-    subject.getTeachers().remove(teacher);
-    teacher.setSubject(null);
+    subject.getTeachers().remove(remove);
+    remove.setSubject(null);
     subjectRepository.save(subject);
   }
 }

@@ -42,14 +42,12 @@ public class TeacherServiceImpl implements TeacherService {
 
   @Override
   public void delete(UUID id) throws ResourceNotFoundException, ResourceIsBeingUsedException {
-    Teacher teacher = teacherRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("No such teacher"));
+    Teacher teacher = findById(id);
     teacherRepository.delete(teacher);
   }
 
   @Override
   public Subject getSubject(UUID id) throws ResourceNotFoundException {
-    return teacherRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("No such teacher")).getSubject();
+    return findById(id).getSubject();
   }
 }
