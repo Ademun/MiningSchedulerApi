@@ -1,7 +1,6 @@
 package org.ademun.mining_scheduler.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.ademun.mining_scheduler.entity.Subject;
 import org.ademun.mining_scheduler.entity.Teacher;
