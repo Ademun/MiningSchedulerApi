@@ -50,7 +50,7 @@ public class SubjectControllerTest {
 
   @Test
   public void create_NewSubject_ReturnsSubject() throws Exception {
-    SubjectRequestDto requestDto = new SubjectRequestDto("Высшая математика");
+    SubjectRequestDto requestDto = new SubjectRequestDto("Test");
     Subject subject = new Subject();
     subject.setId(UUID.randomUUID());
     subject.setName(requestDto.name());

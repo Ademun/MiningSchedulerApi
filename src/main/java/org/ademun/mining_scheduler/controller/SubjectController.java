@@ -72,7 +72,8 @@ public class SubjectController {
   }
 
   @PatchMapping("/subjects/{id}/teachers")
-  public HttpEntity<Void> addTeacher(@PathVariable UUID id, @RequestBody TeacherRequestDto teacher) {
+  public HttpEntity<Void> addTeacher(@PathVariable UUID id,
+      @RequestBody TeacherRequestDto teacher) {
     subjectService.addTeacher(id, teacherMapper.fromRequest(teacher));
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }

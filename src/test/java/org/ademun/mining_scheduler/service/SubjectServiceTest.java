@@ -83,6 +83,6 @@ public class SubjectServiceTest {
 
     ResourceIsBeingUsedException exception = assertThrows(ResourceIsBeingUsedException.class,
         () -> subjectService.delete(subject.getId()));
-    assertEquals("The subject has teachers", exception.getMessage());
+    assertEquals("Cant delete a subject with teachers", exception.getMessage());
   }
 }

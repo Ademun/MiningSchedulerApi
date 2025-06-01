@@ -49,7 +49,7 @@ public class SubjectServiceImpl implements SubjectService {
     Subject subject = subjectRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("No such subject"));
     if (!subject.getTeachers().isEmpty()) {
-      throw new ResourceIsBeingUsedException("The subject has teachers");
+      throw new ResourceIsBeingUsedException("Cant delete a subject with teachers");
     }
     subjectRepository.delete(subject);
   }

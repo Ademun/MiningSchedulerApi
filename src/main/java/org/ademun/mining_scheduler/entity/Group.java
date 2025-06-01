@@ -15,16 +15,14 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.ToString.Exclude;
 import org.hibernate.proxy.HibernateProxy;
 
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "group", indexes = {
+@Table(name = "student_group", indexes = {
     @Index(name = "idx_group_name_unq", columnList = "name", unique = true),
     @Index(name = "idx_group_chat_id_unq", columnList = "chat_id", unique = true)
 })
@@ -37,9 +35,9 @@ public class Group {
   @Column(name = "name", nullable = false)
   private String name;
   @Column(name = "chat_id", nullable = false)
-  private long chatId;
+  private Long chatId;
 
-  @OneToMany(mappedBy = "group", orphanRemoval = true)
+  @OneToMany(mappedBy = "group")
   @Exclude
   private Set<Student> students = new LinkedHashSet<>();
 
