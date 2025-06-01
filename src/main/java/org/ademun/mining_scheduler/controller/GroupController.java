@@ -104,7 +104,7 @@ public class GroupController {
 
   @RequestMapping(value = "/groups/{id}/schedules", params = "week")
   public HttpEntity<ScheduleResponseDto> getScheduleByWeek(@PathVariable UUID id,
-      @RequestParam short week) {
+      @RequestParam Short week) {
     Schedule schedule = groupService.getScheduleByWeek(id, week);
     return new ResponseEntity<>(scheduleMapper.toResponse(schedule), HttpStatus.OK);
   }

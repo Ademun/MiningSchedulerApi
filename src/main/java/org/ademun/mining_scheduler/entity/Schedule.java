@@ -33,10 +33,10 @@ public class Schedule {
   @Column(name = "id", nullable = false)
   private UUID id;
   @Column(name = "week", nullable = false)
-  private short week;
+  private Short week;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "group_id", nullable = false)
+  @JoinColumn(name = "group_id")
   private Group group;
 
   @OneToMany(mappedBy = "schedule", orphanRemoval = true)

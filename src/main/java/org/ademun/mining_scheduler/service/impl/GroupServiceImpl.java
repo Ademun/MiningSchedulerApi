@@ -2,6 +2,7 @@ package org.ademun.mining_scheduler.service.impl;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.entity.Group;
@@ -93,8 +94,8 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
-  public Schedule getScheduleByWeek(UUID id, short week) throws ResourceNotFoundException {
-    return getSchedules(id).stream().filter(schedule -> schedule.getWeek() == week).findFirst()
+  public Schedule getScheduleByWeek(UUID id, Short week) throws ResourceNotFoundException {
+    return getSchedules(id).stream().filter(schedule -> Objects.equals(schedule.getWeek(), week)).findFirst()
         .orElseThrow(() -> new ResourceNotFoundException("No such schedule"));
   }
 

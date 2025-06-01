@@ -33,7 +33,7 @@ public interface GroupService {
 
   List<Schedule> getSchedules(UUID id) throws ResourceNotFoundException;
 
-  Schedule getScheduleByWeek(UUID id, short week) throws ResourceNotFoundException;
+  Schedule getScheduleByWeek(UUID id, Short week) throws ResourceNotFoundException;
 
   void addSchedule(UUID id, Schedule schedule)
       throws ResourceNotFoundException, ResourceAlreadyExistsException;

@@ -31,9 +31,9 @@ public class Lesson {
   @Column(name = "type", nullable = false)
   private LessonType type;
   @Column(name = "building", nullable = false)
-  private short building;
+  private Short building;
   @Column(name = "classroom", nullable = false)
-  private short classroom;
+  private Short classroom;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "day_id", nullable = false)

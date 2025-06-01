@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.DayOfWeek;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class Day {
   @Column(name = "id", nullable = false)
   private UUID id;
   @Column(name = "day_of_week", nullable = false)
-  private short day_of_week;
+  private DayOfWeek dayOfWeek;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "schedule_id", nullable = false)
