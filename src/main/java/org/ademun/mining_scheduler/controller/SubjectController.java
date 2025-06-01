@@ -1,18 +1,22 @@
 package org.ademun.mining_scheduler.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.dto.mapper.SubjectMapper;
+import org.ademun.mining_scheduler.dto.mapper.TeacherMapper;
 import org.ademun.mining_scheduler.dto.request.SubjectRequestDto;
+import org.ademun.mining_scheduler.dto.request.TeacherRequestDto;
 import org.ademun.mining_scheduler.dto.response.SubjectResponseDto;
+import org.ademun.mining_scheduler.dto.response.TeacherResponseDto;
 import org.ademun.mining_scheduler.entity.Subject;
+import org.ademun.mining_scheduler.entity.Teacher;
 import org.ademun.mining_scheduler.service.SubjectService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +30,7 @@ public class SubjectController {
 
   private final SubjectService subjectService;
   private final SubjectMapper subjectMapper;
+  private final TeacherMapper teacherMapper;
 
   @PostMapping("/subjects")
   public HttpEntity<SubjectResponseDto> createSubject(@RequestBody SubjectRequestDto requestDto) {
@@ -54,26 +59,26 @@ public class SubjectController {
   }
 
   @DeleteMapping("/subjects/{id}")
-  public HttpEntity deleteSubject(@PathVariable UUID id) {
+  public HttpEntity<Void> deleteSubject(@PathVariable UUID id) {
     subjectService.delete(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
-  //TODO: Return TeacherResponseDTO list
-//  @RequestMapping("/subjects/{id}/teachers")
-//  public HttpEntity<List<Teacher>> getTeachers(@PathVariable UUID id) {
-//    List<Teacher> teachers = subjectService.getTeachers(id);
-//    return new ResponseEntity<>(teachers, HttpStatus.OK);
-//  }
-  //TODO: Change request to TeacherRequestDTO
-//  @PatchMapping("/subjects/{id}/teachers")
-//  public HttpEntity addTeacher(@PathVariable UUID id, @RequestBody Teacher teacher) {
-//    subjectService.addTeacher(id, teacher);
-//    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//  }
-//
+  @RequestMapping("/subjects/{id}/teachers")
+  public HttpEntity<List<TeacherResponseDto>> getTeachers(@PathVariable UUID id) {
+    List<Teacher> teachers = subjectService.getTeachers(id);
+    return new ResponseEntity<>(teachers.stream().map(teacherMapper::toResponse).toList(),
+        HttpStatus.OK);
+  }
+
+  @PatchMapping("/subjects/{id}/teachers")
+  public HttpEntity<Void> addTeacher(@PathVariable UUID id, @RequestBody TeacherRequestDto teacher) {
+    subjectService.addTeacher(id, teacherMapper.fromRequest(teacher));
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
   @DeleteMapping("/subjects/{id}/teachers/{teacherId}")
-  public HttpEntity removeTeacher(@PathVariable UUID id, @PathVariable UUID teacherId) {
+  public HttpEntity<Void> removeTeacher(@PathVariable UUID id, @PathVariable UUID teacherId) {
     subjectService.removeTeacher(id, teacherId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }

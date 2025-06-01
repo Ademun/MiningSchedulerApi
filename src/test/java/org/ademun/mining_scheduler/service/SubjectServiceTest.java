@@ -32,12 +32,10 @@ public class SubjectServiceTest {
   public void create_NewSubject_ReturnsSubject() {
     Subject subject = new Subject();
     subject.setId(UUID.randomUUID());
-    subject.setName("Высшая математика");
+    subject.setName("Test");
 
     when(subjectRepository.isPresent(subject.getName())).thenReturn(false);
     when(subjectRepository.save(subject)).thenReturn(subject);
-
-    System.out.println(subjectRepository.save(subject).getId());
 
     Subject created = subjectService.create(subject);
     assertNotNull(created.getId());
@@ -48,7 +46,7 @@ public class SubjectServiceTest {
   public void create_ExistingSubject_ThrowsException() {
     Subject subject = new Subject();
     subject.setId(UUID.randomUUID());
-    subject.setName("Высшая математика");
+    subject.setName("Test");
 
     when(subjectRepository.isPresent(subject.getName())).thenReturn(true);
 
@@ -60,7 +58,7 @@ public class SubjectServiceTest {
   @Test
   public void delete_SubjectWithoutTeachers_Success() {
     Subject subject = new Subject();
-    subject.setName("Высшая математика");
+    subject.setName("Test");
 
     when(subjectRepository.findById(subject.getId())).thenReturn(Optional.of(subject));
     doNothing().when(subjectRepository).delete(subject);
@@ -72,12 +70,12 @@ public class SubjectServiceTest {
   public void delete_SubjectWithTeachers_ThrowsException() {
     Subject subject = new Subject();
     subject.setId(UUID.randomUUID());
-    subject.setName("Высшая математика");
+    subject.setName("Test");
     Teacher teacher = new Teacher();
     teacher.setId(UUID.randomUUID());
     teacher.setName("Test");
-    teacher.setSurname("Test");
-    teacher.setPatronymic("Test");
+    teacher.setSurname("Test2");
+    teacher.setPatronymic("Test3");
     subject.getTeachers().add(teacher);
     teacher.setSubject(subject);
 

@@ -24,7 +24,7 @@ public class SubjectRepositoryTest {
   @Test
   public void findByName_ExistingName_ReturnsSubject() {
     Subject subject = new Subject();
-    subject.setName("Высшая математика");
+    subject.setName("Test");
     subjectRepository.save(subject);
 
     Optional<Subject> found = subjectRepository.findByName(subject.getName());
@@ -36,10 +36,10 @@ public class SubjectRepositoryTest {
   @Test
   public void findByName_NonExistingName_ReturnsEmpty() {
     Subject subject = new Subject();
-    subject.setName("Высшая математика");
+    subject.setName("Test");
     subjectRepository.save(subject);
 
-    Optional<Subject> found = subjectRepository.findByName("История России");
+    Optional<Subject> found = subjectRepository.findByName("Invalid");
 
     assertTrue(found.isEmpty());
   }
@@ -47,10 +47,10 @@ public class SubjectRepositoryTest {
   @Test
   public void findByName_MixedName_ReturnsSubject() {
     Subject subject = new Subject();
-    subject.setName("Высшая математика");
+    subject.setName("Test");
     subjectRepository.save(subject);
 
-    Optional<Subject> found = subjectRepository.findByName("В ы сШАя МАТ емАТИка");
+    Optional<Subject> found = subjectRepository.findByName("T e ST");
 
     assertTrue(found.isPresent());
     assertEquals(subject.getName(), found.get().getName());
@@ -59,7 +59,7 @@ public class SubjectRepositoryTest {
   @Test
   public void isPresent_ExistingName_ReturnsTrue() {
     Subject subject = new Subject();
-    subject.setName("Высшая математика");
+    subject.setName("Test");
     subjectRepository.save(subject);
 
     boolean found = subjectRepository.isPresent(subject.getName());
@@ -70,10 +70,10 @@ public class SubjectRepositoryTest {
   @Test
   public void isPresent_NonExistingName_ReturnsFalse() {
     Subject subject = new Subject();
-    subject.setName("Высшая математика");
+    subject.setName("Test");
     subjectRepository.save(subject);
 
-    boolean found = subjectRepository.isPresent("История России");
+    boolean found = subjectRepository.isPresent("Invalid");
 
     assertFalse(found);
   }
