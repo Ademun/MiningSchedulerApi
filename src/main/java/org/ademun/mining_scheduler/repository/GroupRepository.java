@@ -15,6 +15,7 @@ public interface GroupRepository extends JpaRepository<Group, UUID> {
 
   Optional<Group> findByChatId(long chatId);
 
-  @Query("select case when (count(g) > 0) then true else false end from Group g where replace(lower(g.name), ' ', '') = replace(lower(:name), ' ', '')")
-  boolean isPresent(String name);
+  boolean existsByChatId(long chatId);
+
+  boolean existsByName(String name);
 }

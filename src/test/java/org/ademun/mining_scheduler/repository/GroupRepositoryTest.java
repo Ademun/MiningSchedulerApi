@@ -1,7 +1,6 @@
 package org.ademun.mining_scheduler.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -82,29 +81,5 @@ public class GroupRepositoryTest {
     Optional<Group> found = groupRepository.findByChatId(2);
 
     assertTrue(found.isEmpty());
-  }
-
-  @Test
-  public void isPresent_ExistingName_ReturnsTrue() {
-    Group group = new Group();
-    group.setName("Test");
-    group.setChatId(1L);
-    groupRepository.save(group);
-
-    boolean found = groupRepository.isPresent(group.getName());
-
-    assertTrue(found);
-  }
-
-  @Test
-  public void isPresent_NonExistingName_ReturnsFalse() {
-    Group group = new Group();
-    group.setName("Test");
-    group.setChatId(1L);
-    groupRepository.save(group);
-
-    boolean found = groupRepository.isPresent("Invalid");
-
-    assertFalse(found);
   }
 }

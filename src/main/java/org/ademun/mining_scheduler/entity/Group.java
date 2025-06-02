@@ -1,5 +1,6 @@
 package org.ademun.mining_scheduler.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,7 +42,7 @@ public class Group {
   @Exclude
   private Set<Student> students = new LinkedHashSet<>();
 
-  @OneToMany(mappedBy = "group", orphanRemoval = true)
+  @OneToMany(mappedBy = "group", orphanRemoval = true, cascade = CascadeType.ALL)
   @Exclude
   private Set<Schedule> schedules = new LinkedHashSet<>();
 

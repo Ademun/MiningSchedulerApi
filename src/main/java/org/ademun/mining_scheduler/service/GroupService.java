@@ -11,13 +11,17 @@ import org.ademun.mining_scheduler.exception.ResourceNotFoundException;
 
 public interface GroupService {
 
-  Group create(Group group) throws ResourceAlreadyExistsException;
+  Group save(Group group) throws ResourceAlreadyExistsException;
 
   Group findById(UUID id) throws ResourceNotFoundException;
 
   Group findByName(String groupName) throws ResourceNotFoundException;
 
+  boolean existsByName(String groupName);
+
   Group findByChatId(Long chatId) throws ResourceNotFoundException;
+
+  boolean existsByChatId(Long chatId);
 
   List<Group> findAll();
 

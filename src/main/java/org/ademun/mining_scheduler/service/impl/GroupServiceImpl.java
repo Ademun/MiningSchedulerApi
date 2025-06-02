@@ -21,10 +21,7 @@ public class GroupServiceImpl implements GroupService {
   private final GroupRepository groupRepository;
 
   @Override
-  public Group create(Group group) throws ResourceAlreadyExistsException {
-    if (groupRepository.isPresent(group.getName())) {
-      throw new ResourceAlreadyExistsException("Group already exists");
-    }
+  public Group save(Group group) throws ResourceAlreadyExistsException {
     return groupRepository.save(group);
   }
 
@@ -41,9 +38,19 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
+  public boolean existsByName(String groupName) {
+    return groupRepository.existsByName(groupName);
+  }
+
+  @Override
   public Group findByChatId(Long chatId) throws ResourceNotFoundException {
     return groupRepository.findByChatId(chatId)
         .orElseThrow(() -> new ResourceNotFoundException("No such group"));
+  }
+
+  @Override
+  public boolean existsByChatId(Long chatId) {
+    return groupRepository.existsByChatId(chatId);
   }
 
   @Override
@@ -103,6 +110,7 @@ public class GroupServiceImpl implements GroupService {
     schedule.setWeek((short) (group.getSchedules().size() + 1));
     group.getSchedules().add(schedule);
     schedule.setGroup(group);
+    System.out.println(schedule);
     groupRepository.save(group);
   }
 

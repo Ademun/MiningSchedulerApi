@@ -1,7 +1,6 @@
 package org.ademun.mining_scheduler.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -24,19 +23,6 @@ public class ScheduleServiceTest {
   private ScheduleServiceImpl scheduleService;
   @Mock
   private ScheduleRepository scheduleRepository;
-
-  @Test
-  public void create_NewSchedule_ReturnsSchedule() {
-    Schedule schedule = new Schedule();
-    schedule.setId(UUID.randomUUID());
-    schedule.setWeek((short) 1);
-
-    when(scheduleRepository.save(schedule)).thenReturn(schedule);
-
-    Schedule created = scheduleService.create(schedule);
-    assertNotNull(created.getId());
-    assertEquals(schedule.getId(), created.getId());
-  }
 
   @Test
   public void getCurrentDay_ReturnsCurrentDay() {

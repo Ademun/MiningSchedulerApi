@@ -1,7 +1,9 @@
 package org.ademun.mining_scheduler.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,11 +40,12 @@ public class Schedule {
   @Column(name = "number_of_days", nullable = false)
   private Short numberOfDays;
 
-  @ManyToOne(optional = false)
+  @ManyToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "group_id")
+  @Exclude
   private Group group;
 
-  @OneToMany(mappedBy = "schedule", orphanRemoval = true)
+  @OneToMany(mappedBy = "schedule", orphanRemoval = true, cascade = CascadeType.ALL)
   @Exclude
   private Set<Day> days = new LinkedHashSet<>();
 

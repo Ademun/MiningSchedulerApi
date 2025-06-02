@@ -2,6 +2,7 @@ package org.ademun.mining_scheduler.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,8 +37,9 @@ public class Day {
   @Column(name = "day_of_week", nullable = false)
   private DayOfWeek dayOfWeek;
 
-  @ManyToOne(optional = false)
+  @ManyToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "schedule_id", nullable = false)
+  @Exclude
   private Schedule schedule;
 
   @OneToMany(mappedBy = "day", orphanRemoval = true)
