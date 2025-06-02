@@ -2,7 +2,6 @@ package org.ademun.mining_scheduler.service.impl;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.entity.Group;
@@ -69,7 +68,7 @@ public class GroupServiceImpl implements GroupService {
   @Override
   @Transactional
   public void addStudent(UUID id, Student student)
-      throws ResourceNotFoundException, ResourceAlreadyExistsException {
+      throws ResourceNotFoundException {
     Group group = findById(id);
     group.getStudents().add(student);
     student.setGroup(group);
@@ -94,15 +93,14 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
-  public Schedule getScheduleByWeek(UUID id, Short week) throws ResourceNotFoundException {
-    return getSchedules(id).stream().filter(schedule -> Objects.equals(schedule.getWeek(), week)).findFirst()
-        .orElseThrow(() -> new ResourceNotFoundException("No such schedule"));
-  }
-
-  @Override
   @Transactional
   public void addSchedule(UUID id, Schedule schedule) throws ResourceNotFoundException {
     Group group = findById(id);
+    //TODO: Add exception message
+    if (group.getSchedules().size() >= 5) {
+      throw new RuntimeException();
+    }
+    schedule.setWeek((short) (group.getSchedules().size() + 1));
     group.getSchedules().add(schedule);
     schedule.setGroup(group);
     groupRepository.save(group);

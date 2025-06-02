@@ -26,18 +26,14 @@ public interface GroupService {
   List<Student> getStudents(UUID id) throws ResourceNotFoundException;
 
   void addStudent(UUID id, Student student)
-      throws ResourceNotFoundException, ResourceAlreadyExistsException;
-
-  void removeStudent(UUID id, UUID studentId)
       throws ResourceNotFoundException;
+
+  void removeStudent(UUID id, UUID studentId) throws ResourceNotFoundException;
 
   List<Schedule> getSchedules(UUID id) throws ResourceNotFoundException;
 
-  Schedule getScheduleByWeek(UUID id, Short week) throws ResourceNotFoundException;
-
   void addSchedule(UUID id, Schedule schedule)
-      throws ResourceNotFoundException, ResourceAlreadyExistsException;
-
-  void removeSchedule(UUID id, UUID scheduleId)
       throws ResourceNotFoundException;
+
+  void removeSchedule(UUID id, UUID scheduleId) throws ResourceNotFoundException;
 }

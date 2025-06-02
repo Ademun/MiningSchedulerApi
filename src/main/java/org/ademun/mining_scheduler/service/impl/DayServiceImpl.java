@@ -1,12 +1,12 @@
 package org.ademun.mining_scheduler.service.impl;
 
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.entity.Day;
 import org.ademun.mining_scheduler.entity.Lesson;
 import org.ademun.mining_scheduler.exception.ResourceAlreadyExistsException;
-import org.ademun.mining_scheduler.exception.ResourceIsBeingUsedException;
 import org.ademun.mining_scheduler.exception.ResourceNotFoundException;
 import org.ademun.mining_scheduler.repository.DayRepository;
 import org.ademun.mining_scheduler.service.DayService;
@@ -18,12 +18,6 @@ public class DayServiceImpl implements DayService {
 
   private final DayRepository dayRepository;
 
-  //TODO: Implement check for duplicate days on same week
-  @Override
-  public Day create(Day day) throws ResourceAlreadyExistsException {
-    return dayRepository.save(day);
-  }
-
   @Override
   public Day findById(UUID id) throws ResourceNotFoundException {
     return dayRepository.findById(id)
@@ -31,14 +25,10 @@ public class DayServiceImpl implements DayService {
   }
 
   @Override
-  public List<Day> findAll() {
-    return dayRepository.findAll();
-  }
-
-  @Override
-  public void delete(UUID id) throws ResourceNotFoundException, ResourceIsBeingUsedException {
-    Day day = findById(id);
-    dayRepository.delete(day);
+  public Day findByScheduleIdAndDayOfWeek(UUID scheduleId, DayOfWeek dayOfWeek)
+      throws ResourceNotFoundException {
+    return dayRepository.findBySchedule_IdAndDayOfWeek(scheduleId, dayOfWeek)
+        .orElseThrow(() -> new ResourceNotFoundException("No such day"));
   }
 
   @Override
