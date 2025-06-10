@@ -1,4 +1,4 @@
-package org.ademun.mining_scheduler.scheduling.domain;
+package org.ademun.mining_scheduler.scheduling.domain.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.EmbeddedId;

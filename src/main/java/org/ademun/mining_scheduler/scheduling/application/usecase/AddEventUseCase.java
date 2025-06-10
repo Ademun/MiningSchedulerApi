@@ -4,12 +4,12 @@ import jakarta.transaction.Transactional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.scheduling.application.usecase.command.AddEventCommand;
-import org.ademun.mining_scheduler.scheduling.domain.Event;
-import org.ademun.mining_scheduler.scheduling.domain.EventId;
-import org.ademun.mining_scheduler.scheduling.domain.Schedule;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleId;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleRepository;
-import org.ademun.mining_scheduler.scheduling.domain.TimePeriod;
+import org.ademun.mining_scheduler.scheduling.domain.model.Event;
+import org.ademun.mining_scheduler.scheduling.domain.model.EventId;
+import org.ademun.mining_scheduler.scheduling.domain.model.Schedule;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleId;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleRepository;
+import org.ademun.mining_scheduler.scheduling.domain.model.TimePeriod;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +29,7 @@ public class AddEventUseCase implements UseCase<AddEventCommand, Void> {
         .description(command.description())
         .timePeriod(new TimePeriod(command.start(), command.end()))
         .build();
-    schedule.addEvent(command.weekNumber(), command.dayOfWeek(), event);
+    schedule.addEvent(command.weekIndex(), command.dayOfWeek(), event);
     scheduleRepository.save(schedule);
     return null;
   }

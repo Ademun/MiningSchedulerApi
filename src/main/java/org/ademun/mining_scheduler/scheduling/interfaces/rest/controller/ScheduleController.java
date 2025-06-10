@@ -63,19 +63,19 @@ public class ScheduleController {
     return ResponseEntity.noContent().build();
   }
 
-  @DeleteMapping("/{scheduleId}/weeks/{weekNumber}")
+  @DeleteMapping("/{scheduleId}/weeks/{weekIndex}")
   public ResponseEntity<Void> removeWeek(@PathVariable UUID scheduleId,
-      @PathVariable Integer weekNumber) {
-    RemoveWeekCommand command = new RemoveWeekCommand(scheduleId, weekNumber);
+      @PathVariable Integer weekIndex) {
+    RemoveWeekCommand command = new RemoveWeekCommand(scheduleId, weekIndex);
     removeWeekUseCase.execute(command);
     return ResponseEntity.noContent().build();
   }
 
-  @PatchMapping("/{scheduleId}/weeks/{weekNumber}/days/{dayNumber}")
+  @PatchMapping("/{scheduleId}/weeks/{weekIndex}/days/{dayNumber}")
   public ResponseEntity<Void> addEvent(@RequestBody @Valid AddEventRequest request,
-      @PathVariable UUID scheduleId, @PathVariable Integer weekNumber,
+      @PathVariable UUID scheduleId, @PathVariable Integer weekIndex,
       @PathVariable Integer dayNumber) {
-    AddEventCommand command = new AddEventCommand(scheduleId, weekNumber, DayOfWeek.of(dayNumber),
+    AddEventCommand command = new AddEventCommand(scheduleId, weekIndex, DayOfWeek.of(dayNumber),
         request.title(), request.description(), request.start(), request.end());
     addEventUseCase.execute(command);
     return ResponseEntity.noContent().build();

@@ -12,7 +12,7 @@ public record AddEventCommand(
     @NotNull
     UUID scheduleId,
     @NotNull
-    Integer weekNumber,
+    Integer weekIndex,
     @NotNull
     DayOfWeek dayOfWeek,
     @NotBlank

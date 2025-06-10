@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.ademun.mining_scheduler.scheduling.domain.Day;
-import org.ademun.mining_scheduler.scheduling.domain.DayId;
-import org.ademun.mining_scheduler.scheduling.domain.Schedule;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleId;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleRepository;
-import org.ademun.mining_scheduler.scheduling.domain.Week;
-import org.ademun.mining_scheduler.scheduling.domain.WeekId;
+import org.ademun.mining_scheduler.scheduling.domain.model.Day;
+import org.ademun.mining_scheduler.scheduling.domain.model.DayId;
+import org.ademun.mining_scheduler.scheduling.domain.model.Schedule;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleId;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleRepository;
+import org.ademun.mining_scheduler.scheduling.domain.model.Week;
+import org.ademun.mining_scheduler.scheduling.domain.model.WeekId;
 import org.springframework.stereotype.Service;
 
 @Service

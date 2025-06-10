@@ -2,9 +2,9 @@ package org.ademun.mining_scheduler.scheduling.application.usecase;
 
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.scheduling.application.usecase.command.RemoveWeekCommand;
-import org.ademun.mining_scheduler.scheduling.domain.Schedule;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleId;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleRepository;
+import org.ademun.mining_scheduler.scheduling.domain.model.Schedule;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleId;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +17,7 @@ public class RemoveWeekUseCase implements UseCase<RemoveWeekCommand, Void> {
   public Void execute(RemoveWeekCommand command) {
     Schedule schedule = scheduleRepository.findById(new ScheduleId(command.scheduleId()))
         .orElseThrow();
-    schedule.removeWeek(command.weekNumber());
+    schedule.removeWeek(command.weekIndex());
     scheduleRepository.save(schedule);
     return null;
   }

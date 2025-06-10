@@ -5,9 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalTime;
+import org.ademun.mining_scheduler.scheduling.domain.model.Event;
 
 /**
- * DTO for {@link org.ademun.mining_scheduler.scheduling.domain.Event}
+ * DTO for {@link Event}
  */
 public record AddEventRequest(@NotBlank @Size(min = 1, max = 255) String title,
                               @NotBlank @Size(min = 1, max = 255) String description,

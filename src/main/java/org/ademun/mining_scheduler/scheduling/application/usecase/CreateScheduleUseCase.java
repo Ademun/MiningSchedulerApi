@@ -4,9 +4,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.scheduling.application.usecase.command.CreateScheduleCommand;
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.CreateScheduleResponse;
-import org.ademun.mining_scheduler.scheduling.domain.Schedule;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleId;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleRepository;
+import org.ademun.mining_scheduler.scheduling.domain.model.Schedule;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleId;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -6,9 +6,9 @@ import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.GetSc
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.GetScheduleResponse.WeekDto;
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.GetScheduleResponse.WeekDto.DayDto;
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.GetScheduleResponse.WeekDto.DayDto.EventDto;
-import org.ademun.mining_scheduler.scheduling.domain.Schedule;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleId;
-import org.ademun.mining_scheduler.scheduling.domain.ScheduleRepository;
+import org.ademun.mining_scheduler.scheduling.domain.model.Schedule;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleId;
+import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,4 +1,4 @@
-package org.ademun.mining_scheduler.scheduling.domain;
+package org.ademun.mining_scheduler.scheduling.domain.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -33,6 +33,7 @@ public class Schedule {
   private String name;
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Week> weeks = new ArrayList<>();
+  private Integer activeWeekIndex;
 
   public void addWeek(Week week) {
     if (weeks.size() >= 5) {
@@ -40,16 +41,19 @@ public class Schedule {
     }
     week.setSchedule(this);
     weeks.add(week);
+    if (weeks.size() == 1) {
+      activeWeekIndex = 0;
+    }
   }
 
-  public void removeWeek(Integer weekNumber) {
-    Week weekToRemove = weeks.get(weekNumber);
+  public void removeWeek(Integer weekIndex) {
+    Week weekToRemove = weeks.get(weekIndex);
     weeks.remove(weekToRemove);
     weekToRemove.setSchedule(null);
   }
 
-  public void addEvent(Integer weekNumber, DayOfWeek day, Event event) {
-    Day targetDay = getDayByWeekByDayOfWeek(weekNumber, day);
+  public void addEvent(Integer weekIndex, DayOfWeek day, Event event) {
+    Day targetDay = getDayByWeekByDayOfWeek(weekIndex, day);
     targetDay.addEvent(event);
   }
 
@@ -59,24 +63,31 @@ public class Schedule {
     day.removeEvent(event);
   }
 
-  public Day getToday(Integer weekNumber) {
-    return getDayByWeekByDayOfWeek(weekNumber, LocalDate.now().getDayOfWeek());
+  public Day getToday() {
+    return getDayByWeekByDayOfWeek(activeWeekIndex, LocalDate.now().getDayOfWeek());
   }
 
-  public Day getTomorrow(Integer weekNumber) {
-    return getDayByWeekByDayOfWeek(weekNumber, LocalDate.now().getDayOfWeek().plus(1));
+  public Day getTomorrow() {
+    return getDayByWeekByDayOfWeek(activeWeekIndex, LocalDate.now().getDayOfWeek().plus(1));
   }
 
-  public Event getCurrentEvent(Integer weekNumber) {
-    return getToday(weekNumber).findCurrentEvent().orElseThrow();
+  public Event getCurrentEvent() {
+    return getToday().findCurrentEvent().orElseThrow();
   }
 
-  public Event getNextEvent(Integer weekNumber) {
-    return getToday(weekNumber).findNextEvent().orElseThrow();
+  public Event getNextEvent() {
+    return getToday().findNextEvent().orElseThrow();
   }
 
-  private Day getDayByWeekByDayOfWeek(Integer weekNumber, DayOfWeek dayOfWeek) {
-    return weeks.get(weekNumber - 1).getDays().get(dayOfWeek.ordinal());
+  public void rotateWeek() {
+    if (weeks.isEmpty()) {
+      return;
+    }
+    activeWeekIndex = (activeWeekIndex + 1) % weeks.size();
+  }
+
+  private Day getDayByWeekByDayOfWeek(Integer weekIndex, DayOfWeek dayOfWeek) {
+    return weeks.get(weekIndex).getDays().get(dayOfWeek.ordinal());
   }
 
   private Optional<Event> findEventById(EventId id) {
