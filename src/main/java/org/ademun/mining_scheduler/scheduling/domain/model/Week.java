@@ -10,12 +10,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostUpdate;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
+import java.time.DayOfWeek;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -23,7 +24,6 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name = "week")
-@NoArgsConstructor
 @AllArgsConstructor
 public class Week {
 
@@ -33,7 +33,19 @@ public class Week {
   @JoinColumn(name = "schedule_id")
   private Schedule schedule;
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "week", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Day> days = new ArrayList<>(7);
+  private List<Day> days;
+
+  public Week() {
+    this.days = Arrays.stream(DayOfWeek.values())
+        .map(dayOfWeek -> {
+          Day day = new Day();
+          day.setId((new DayId(UUID.randomUUID())));
+          day.setDayOfWeek(dayOfWeek);
+          day.setWeek(this);
+          return day;
+        })
+        .toList();
+  }
 
   @PostPersist
   @PostUpdate

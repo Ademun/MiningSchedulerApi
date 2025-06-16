@@ -2,22 +2,26 @@ package org.ademun.mining_scheduler.scheduling.interfaces.rest.controller;
 
 import jakarta.validation.Valid;
 import java.time.DayOfWeek;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.scheduling.application.usecase.AddEventUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.AddWeekUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.CreateScheduleUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.DeleteScheduleUseCase;
+import org.ademun.mining_scheduler.scheduling.application.usecase.GetEventsUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.GetScheduleUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.RemoveEventUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.RemoveWeekUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.command.AddEventCommand;
 import org.ademun.mining_scheduler.scheduling.application.usecase.command.CreateScheduleCommand;
+import org.ademun.mining_scheduler.scheduling.application.usecase.command.GetEventsCommand;
 import org.ademun.mining_scheduler.scheduling.application.usecase.command.RemoveEventCommand;
 import org.ademun.mining_scheduler.scheduling.application.usecase.command.RemoveWeekCommand;
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.request.AddEventRequest;
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.request.CreateScheduleRequest;
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.CreateScheduleResponse;
+import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.GetEventResponse;
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.GetScheduleResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +43,7 @@ public class ScheduleController {
   private final GetScheduleUseCase getScheduleUseCase;
   private final AddWeekUseCase addWeekUseCase;
   private final RemoveWeekUseCase removeWeekUseCase;
+  private final GetEventsUseCase getEventsUseCase;
   private final AddEventUseCase addEventUseCase;
   private final RemoveEventUseCase removeEventUseCase;
   private final DeleteScheduleUseCase deleteScheduleUseCase;
@@ -53,8 +58,8 @@ public class ScheduleController {
 
   @GetMapping("/{scheduleId}")
   public ResponseEntity<GetScheduleResponse> getSchedule(@PathVariable UUID scheduleId) {
-    GetScheduleResponse getScheduleResponse = getScheduleUseCase.execute(scheduleId);
-    return new ResponseEntity<>(getScheduleResponse, HttpStatus.OK);
+    GetScheduleResponse schedule = getScheduleUseCase.execute(scheduleId);
+    return ResponseEntity.ok(schedule);
   }
 
   @PatchMapping("/{scheduleId}")
@@ -71,18 +76,27 @@ public class ScheduleController {
     return ResponseEntity.noContent().build();
   }
 
-  @PatchMapping("/{scheduleId}/weeks/{weekIndex}/days/{dayNumber}")
-  public ResponseEntity<Void> addEvent(@RequestBody @Valid AddEventRequest request,
-      @PathVariable UUID scheduleId, @PathVariable Integer weekIndex,
-      @PathVariable Integer dayNumber) {
-    AddEventCommand command = new AddEventCommand(scheduleId, weekIndex, DayOfWeek.of(dayNumber),
-        request.title(), request.description(), request.start(), request.end());
+  @GetMapping("/{scheduleId}/weeks/{weekIndex}/days/{dayOfWeek}/events")
+  public ResponseEntity<List<GetEventResponse>> getEvents(@PathVariable UUID scheduleId,
+      @PathVariable Integer weekIndex, @PathVariable Integer dayOfWeek) {
+    GetEventsCommand command = new GetEventsCommand(scheduleId, weekIndex, DayOfWeek.of(dayOfWeek));
+    List<GetEventResponse> events = getEventsUseCase.execute(command);
+    return ResponseEntity.ok(events);
+  }
+
+  @PostMapping("/{scheduleId}/events")
+  public ResponseEntity<Void> addEvent(@PathVariable UUID scheduleId,
+      @RequestBody @Valid AddEventRequest request) {
+    AddEventCommand command = new AddEventCommand(scheduleId, request.title(),
+        request.description(), request.start(), request.end(), request.isTemporary(),
+        request.date(), request.weekIndex(), request.dayOfWeek());
     addEventUseCase.execute(command);
     return ResponseEntity.noContent().build();
   }
 
-  @DeleteMapping("/{scheduleId}/{eventId}")
-  public ResponseEntity<Void> removeWeek(@PathVariable UUID scheduleId,
+
+  @DeleteMapping("/{scheduleId}/events/{eventId}")
+  public ResponseEntity<Void> removeEvent(@PathVariable UUID scheduleId,
       @PathVariable UUID eventId) {
     RemoveEventCommand command = new RemoveEventCommand(scheduleId, eventId);
     removeEventUseCase.execute(command);

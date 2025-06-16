@@ -5,40 +5,32 @@ import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.MappedSuperclass;
 import java.time.Duration;
 import java.time.LocalTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@MappedSuperclass
 @Getter
 @Setter
-@Builder
-@Entity
-@Table(name = "event")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Event {
 
   @EmbeddedId
-  private EventId id;
+  protected EventId id;
   @Column
-  private String title;
+  protected String title;
   @Column
-  private String description;
+  protected String description;
   @ManyToOne
   @JoinColumn(name = "day_id")
-  private Day day;
+  protected Day day;
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "start", column = @Column(name = "start_time")),
       @AttributeOverride(name = "end", column = @Column(name = "end_time"))})
-  private TimePeriod timePeriod;
+  protected TimePeriod timePeriod;
 
   public Duration getDuration() {
     return timePeriod.duration();

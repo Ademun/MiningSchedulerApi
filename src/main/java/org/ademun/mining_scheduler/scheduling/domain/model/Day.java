@@ -4,7 +4,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -17,19 +16,16 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.util.stream.Stream;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.ademun.mining_scheduler.scheduling.domain.exception.EventDurationOverflowException;
+import org.ademun.mining_scheduler.scheduling.domain.exception.UnknownEventTypeException;
 
 @Getter
 @Setter
-@Builder
 @Entity
 @Table(name = "day")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Day {
 
   @EmbeddedId
@@ -39,38 +35,75 @@ public class Day {
   @ManyToOne
   @JoinColumn(name = "week_id")
   private Week week;
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "day", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Event> events = new ArrayList<>();
+  @OneToMany(mappedBy = "day", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<RecurringEvent> recurringEvents = new ArrayList<>();
+
+  @OneToMany(mappedBy = "day", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<TemporaryEvent> temporaryEvents = new ArrayList<>();
   @Transient
   private Duration totalDuration;
 
   @PostLoad
   private void calculateTotalDuration() {
-    totalDuration = events.stream().map(Event::getDuration).reduce(Duration.ZERO, Duration::plus);
+    totalDuration = recurringEvents.stream()
+        .map(Event::getDuration)
+        .reduce(Duration.ZERO, Duration::plus);
   }
 
   public void addEvent(Event event) {
+    switch (event) {
+      case RecurringEvent r -> addRecurringEvent(r);
+      case TemporaryEvent t -> addTemporaryEvent(t);
+      default -> throw new UnknownEventTypeException(String.format("Unknown event: %s", event));
+    }
+  }
+
+  private void addRecurringEvent(RecurringEvent event) {
     Duration newTotalDuration = totalDuration.plus(event.getDuration());
     if (newTotalDuration.compareTo(Duration.ofHours(24)) > 0) {
+      throw new EventDurationOverflowException("Total duration of events exceeds 24 hours");
+    }
+    totalDuration = newTotalDuration;
+    if (recurringEvents.stream()
+        .anyMatch(e -> e.getTimePeriod().overlapsWith(event.getTimePeriod()))) {
       throw new RuntimeException();
     }
-    event.setDay(this);
-    events.add(event);
-    totalDuration = newTotalDuration;
+    recurringEvents.add(event);
+  }
+
+  private void addTemporaryEvent(TemporaryEvent event) {
+    if (temporaryEvents.stream()
+        .anyMatch(e -> e.getTimePeriod().overlapsWith(event.getTimePeriod()))) {
+      throw new RuntimeException();
+    }
+    temporaryEvents.add(event);
+  }
+
+  public List<Event> getAllEvents() {
+    return Stream.of(recurringEvents, temporaryEvents)
+        .flatMap(List::stream)
+        .map(event -> (Event) event)
+        .toList();
   }
 
   public void removeEvent(Event event) {
-    events.remove(event);
+    switch (event) {
+      case RecurringEvent r -> recurringEvents.remove(r);
+      case TemporaryEvent t -> temporaryEvents.remove(t);
+      default -> throw new RuntimeException();
+    }
     event.setDay(null);
     totalDuration = totalDuration.minus(event.getDuration());
   }
 
   public Optional<Event> findCurrentEvent() {
-    return events.stream().filter(event -> event.isOccurring(LocalTime.now())).findFirst();
+    return getAllEvents().stream().filter(event -> event.isOccurring(LocalTime.now())).findFirst();
   }
 
   public Optional<Event> findNextEvent() {
-    return events.stream().filter(event -> event.getTimePeriod().start().isAfter(LocalTime.now()))
+    return getAllEvents().stream()
+        .filter(event -> event.getTimePeriod().start().isAfter(LocalTime.now()))
         .findFirst();
   }
+
 }

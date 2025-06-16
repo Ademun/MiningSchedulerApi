@@ -68,6 +68,9 @@ public class Schedule {
   }
 
   public Day getTomorrow() {
+    if (LocalDate.now().getDayOfWeek() == DayOfWeek.SUNDAY) {
+      return getDayByWeekByDayOfWeek(activeWeekIndex + 1, LocalDate.now().getDayOfWeek().plus(1));
+    }
     return getDayByWeekByDayOfWeek(activeWeekIndex, LocalDate.now().getDayOfWeek().plus(1));
   }
 
@@ -86,14 +89,14 @@ public class Schedule {
     activeWeekIndex = (activeWeekIndex + 1) % weeks.size();
   }
 
-  private Day getDayByWeekByDayOfWeek(Integer weekIndex, DayOfWeek dayOfWeek) {
+  public Day getDayByWeekByDayOfWeek(Integer weekIndex, DayOfWeek dayOfWeek) {
     return weeks.get(weekIndex).getDays().get(dayOfWeek.ordinal());
   }
 
   private Optional<Event> findEventById(EventId id) {
     return weeks.stream()
         .flatMap(week -> week.getDays().stream())
-        .flatMap(day -> day.getEvents().stream())
+        .flatMap(day -> day.getAllEvents().stream())
         .filter(event -> event.getId().equals(id))
         .findFirst();
   }
