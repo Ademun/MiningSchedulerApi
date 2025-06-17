@@ -25,7 +25,7 @@ public class TemporaryEventNotificationService {
 
   private void checkScheduleEvents(Schedule schedule) {
     schedule.getWeeks()
-        .forEach(week -> week.getDays()
+        .forEach(week -> week.getAllDays()
             .forEach(day -> day.getAllEvents()
                 .stream()
                 .filter(event -> event instanceof TemporaryEvent)

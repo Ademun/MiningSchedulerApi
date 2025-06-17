@@ -78,19 +78,8 @@ public class Schedule {
     return getToday().getAllEvents();
   }
 
-  public List<Event> getTomorrowEvents() {
-    return getTomorrow().getAllEvents();
-  }
-
   public Day getToday() {
     return getDayByWeekByDayOfWeek(activeWeekIndex, LocalDate.now().getDayOfWeek());
-  }
-
-  public Day getTomorrow() {
-    if (LocalDate.now().getDayOfWeek() == DayOfWeek.SUNDAY) {
-      return getDayByWeekByDayOfWeek(activeWeekIndex + 1, LocalDate.now().getDayOfWeek().plus(1));
-    }
-    return getDayByWeekByDayOfWeek(activeWeekIndex, LocalDate.now().getDayOfWeek().plus(1));
   }
 
   public void rotateWeek() {
@@ -101,12 +90,12 @@ public class Schedule {
   }
 
   public Day getDayByWeekByDayOfWeek(Integer weekIndex, DayOfWeek dayOfWeek) {
-    return weeks.get(weekIndex).getDays().get(dayOfWeek.ordinal());
+    return weeks.get(weekIndex).getDay(dayOfWeek);
   }
 
   private Optional<Event> findEventById(EventId id) {
     return weeks.stream()
-        .flatMap(week -> week.getDays().stream())
+        .flatMap(week -> week.getAllDays().stream())
         .flatMap(day -> day.getAllEvents().stream())
         .filter(event -> event.getId().equals(id))
         .findFirst();

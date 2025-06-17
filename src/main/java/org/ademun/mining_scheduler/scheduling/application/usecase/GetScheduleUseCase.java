@@ -25,7 +25,7 @@ public class GetScheduleUseCase implements UseCase<UUID, GetScheduleResponse> {
             String.format("Schedule with value %s not found", scheduleId)));
     return new GetScheduleResponse(schedule.getId().value(), schedule.getName(), schedule.getWeeks()
         .stream()
-        .map(week -> new WeekDto(week.getId().value(), week.getDays()
+        .map(week -> new WeekDto(week.getId().value(), week.getAllDays()
             .stream()
             .map(day -> new DayDto(day.getId().value(), day.getDayOfWeek(), day.getAllEvents()
                 .stream()

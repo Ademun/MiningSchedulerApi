@@ -4,6 +4,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -37,6 +39,7 @@ public class Day {
   @EmbeddedId
   private DayId id;
   @Column
+  @Enumerated(EnumType.STRING)
   private DayOfWeek dayOfWeek;
   @ManyToOne
   @JoinColumn(name = "week_id")
