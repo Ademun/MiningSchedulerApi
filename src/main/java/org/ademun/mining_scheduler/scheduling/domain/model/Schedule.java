@@ -17,6 +17,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
+import org.ademun.mining_scheduler.scheduling.application.usecase.exception.ResourceNotFoundException;
+import org.ademun.mining_scheduler.scheduling.domain.exception.ModelInvariantException;
 
 @Getter
 @Setter
@@ -25,6 +29,7 @@ import lombok.Setter;
 @Table(name = "schedule")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Schedule {
 
   @EmbeddedId
@@ -32,12 +37,13 @@ public class Schedule {
   @Column
   private String name;
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Exclude
   private List<Week> weeks = new ArrayList<>();
   private Integer activeWeekIndex;
 
   public void addWeek(Week week) {
     if (weeks.size() >= 5) {
-      throw new RuntimeException();
+      throw new ModelInvariantException("Cannot add more than 5 weeks");
     }
     week.setSchedule(this);
     weeks.add(week);
@@ -47,6 +53,10 @@ public class Schedule {
   }
 
   public void removeWeek(Integer weekIndex) {
+    if (weekIndex < 0 || weekIndex >= weeks.size()) {
+      throw new IllegalArgumentException(
+          String.format("Week index %d out of range %d", weekIndex, weeks.size()));
+    }
     Week weekToRemove = weeks.get(weekIndex);
     weeks.remove(weekToRemove);
     weekToRemove.setSchedule(null);
@@ -58,9 +68,18 @@ public class Schedule {
   }
 
   public void removeEvent(EventId eventId) {
-    Event event = findEventById(eventId).orElseThrow();
+    Event event = findEventById(eventId).orElseThrow(() -> new ResourceNotFoundException(
+        String.format("Event with value %s not found", eventId)));
     Day day = event.getDay();
     day.removeEvent(event);
+  }
+
+  public List<Event> getTodayEvents() {
+    return getToday().getAllEvents();
+  }
+
+  public List<Event> getTomorrowEvents() {
+    return getTomorrow().getAllEvents();
   }
 
   public Day getToday() {
@@ -72,14 +91,6 @@ public class Schedule {
       return getDayByWeekByDayOfWeek(activeWeekIndex + 1, LocalDate.now().getDayOfWeek().plus(1));
     }
     return getDayByWeekByDayOfWeek(activeWeekIndex, LocalDate.now().getDayOfWeek().plus(1));
-  }
-
-  public Event getCurrentEvent() {
-    return getToday().findCurrentEvent().orElseThrow();
-  }
-
-  public Event getNextEvent() {
-    return getToday().findNextEvent().orElseThrow();
   }
 
   public void rotateWeek() {

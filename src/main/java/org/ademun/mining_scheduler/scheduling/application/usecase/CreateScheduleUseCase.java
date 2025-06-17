@@ -23,6 +23,6 @@ public class CreateScheduleUseCase implements
         .name(command.name())
         .build();
     Schedule savedSchedule = scheduleRepository.save(schedule);
-    return new CreateScheduleResponse(savedSchedule.getId().id());
+    return new CreateScheduleResponse(savedSchedule.getId().value());
   }
 }

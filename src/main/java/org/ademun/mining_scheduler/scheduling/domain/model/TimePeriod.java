@@ -24,4 +24,9 @@ public record TimePeriod(@NotNull LocalTime start,
   public boolean overlapsWith(@NotNull TimePeriod other) {
     return start.isBefore(other.end) && end.isAfter(other.start);
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s-%s", start, end);
+  }
 }

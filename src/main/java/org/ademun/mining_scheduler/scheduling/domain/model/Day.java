@@ -17,13 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ademun.mining_scheduler.scheduling.domain.exception.EventDurationOverflowException;
-import org.ademun.mining_scheduler.scheduling.domain.exception.UnknownEventTypeException;
+import org.ademun.mining_scheduler.scheduling.domain.exception.InvalidParameterException;
+import org.ademun.mining_scheduler.scheduling.domain.exception.ModelInvariantException;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "day")
 public class Day {
@@ -54,27 +60,35 @@ public class Day {
     switch (event) {
       case RecurringEvent r -> addRecurringEvent(r);
       case TemporaryEvent t -> addTemporaryEvent(t);
-      default -> throw new UnknownEventTypeException(String.format("Unknown event: %s", event));
+      default -> throw new InvalidParameterException(String.format("Unknown event: %s", event));
     }
   }
 
   private void addRecurringEvent(RecurringEvent event) {
     Duration newTotalDuration = totalDuration.plus(event.getDuration());
     if (newTotalDuration.compareTo(Duration.ofHours(24)) > 0) {
-      throw new EventDurationOverflowException("Total duration of events exceeds 24 hours");
+      throw new ModelInvariantException("Total duration of events exceeds 24 hours");
     }
     totalDuration = newTotalDuration;
-    if (recurringEvents.stream()
-        .anyMatch(e -> e.getTimePeriod().overlapsWith(event.getTimePeriod()))) {
-      throw new RuntimeException();
+    Optional<RecurringEvent> match = recurringEvents.stream()
+        .filter(e -> e.getTimePeriod().overlapsWith(event.getTimePeriod()))
+        .findFirst();
+    if (match.isPresent()) {
+      throw new ModelInvariantException(
+          String.format("Event %s (%s) overlaps with another event %s (%s)", event.getId().value(),
+              event.getTimePeriod(), match.get().getId().value(), match.get().getTimePeriod()));
     }
     recurringEvents.add(event);
   }
 
   private void addTemporaryEvent(TemporaryEvent event) {
-    if (temporaryEvents.stream()
-        .anyMatch(e -> e.getTimePeriod().overlapsWith(event.getTimePeriod()))) {
-      throw new RuntimeException();
+    Optional<TemporaryEvent> match = temporaryEvents.stream()
+        .filter(e -> e.getTimePeriod().overlapsWith(event.getTimePeriod()))
+        .findFirst();
+    if (match.isPresent()) {
+      throw new ModelInvariantException(
+          String.format("Event %s (%s) overlaps with another event %s (%s)", event.getId().value(),
+              event.getTimePeriod(), match.get().getId().value(), match.get().getTimePeriod()));
     }
     temporaryEvents.add(event);
   }
@@ -90,7 +104,7 @@ public class Day {
     switch (event) {
       case RecurringEvent r -> recurringEvents.remove(r);
       case TemporaryEvent t -> temporaryEvents.remove(t);
-      default -> throw new RuntimeException();
+      default -> throw new InvalidParameterException(String.format("Unknown event: %s", event));
     }
     event.setDay(null);
     totalDuration = totalDuration.minus(event.getDuration());

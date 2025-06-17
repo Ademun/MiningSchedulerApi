@@ -2,6 +2,7 @@ package org.ademun.mining_scheduler.scheduling.application.usecase;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.ademun.mining_scheduler.scheduling.application.usecase.exception.ResourceNotFoundException;
 import org.ademun.mining_scheduler.scheduling.domain.model.Schedule;
 import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleId;
 import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleRepository;
@@ -19,14 +20,16 @@ public class GetScheduleUseCase implements UseCase<UUID, GetScheduleResponse> {
 
   @Override
   public GetScheduleResponse execute(UUID scheduleId) {
-    Schedule schedule = scheduleRepository.findById(new ScheduleId(scheduleId)).orElseThrow();
-    return new GetScheduleResponse(schedule.getId().id(), schedule.getName(), schedule.getWeeks()
+    Schedule schedule = scheduleRepository.findById(new ScheduleId(scheduleId))
+        .orElseThrow(() -> new ResourceNotFoundException(
+            String.format("Schedule with value %s not found", scheduleId)));
+    return new GetScheduleResponse(schedule.getId().value(), schedule.getName(), schedule.getWeeks()
         .stream()
-        .map(week -> new WeekDto(week.getId().id(), week.getDays()
+        .map(week -> new WeekDto(week.getId().value(), week.getDays()
             .stream()
-            .map(day -> new DayDto(day.getId().id(), day.getDayOfWeek(), day.getAllEvents()
+            .map(day -> new DayDto(day.getId().value(), day.getDayOfWeek(), day.getAllEvents()
                 .stream()
-                .map(event -> new EventDto(event.getId().id(), event.getTitle(),
+                .map(event -> new EventDto(event.getId().value(), event.getTitle(),
                     event.getDescription(), event.getTimePeriod().start(),
                     event.getTimePeriod().end()))
                 .toList()))
