@@ -81,6 +81,7 @@ public class Day {
           String.format("Event %s (%s) overlaps with another event %s (%s)", event.getId().value(),
               event.getTimePeriod(), match.get().getId().value(), match.get().getTimePeriod()));
     }
+    event.setDay(this);
     recurringEvents.add(event);
   }
 
@@ -93,6 +94,12 @@ public class Day {
           String.format("Event %s (%s) overlaps with another event %s (%s)", event.getId().value(),
               event.getTimePeriod(), match.get().getId().value(), match.get().getTimePeriod()));
     }
+    if (event.getDate().getDayOfWeek() != dayOfWeek) {
+      throw new ModelInvariantException(
+          String.format("Event %s date does lies on %s, not on %s", event.getId().value(),
+              event.getDate().getDayOfWeek(), dayOfWeek));
+    }
+    event.setDay(this);
     temporaryEvents.add(event);
   }
 

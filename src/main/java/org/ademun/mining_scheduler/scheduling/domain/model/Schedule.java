@@ -8,7 +8,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,10 +40,11 @@ public class Schedule {
   private List<Week> weeks = new ArrayList<>();
   private Integer activeWeekIndex;
 
-  public void addWeek(Week week) {
+  public void addWeek() {
     if (weeks.size() >= 5) {
       throw new ModelInvariantException("Cannot add more than 5 weeks");
     }
+    Week week = new Week();
     week.setSchedule(this);
     weeks.add(week);
     if (weeks.size() == 1) {
@@ -74,14 +74,6 @@ public class Schedule {
     day.removeEvent(event);
   }
 
-  public List<Event> getTodayEvents() {
-    return getToday().getAllEvents();
-  }
-
-  public Day getToday() {
-    return getDayByWeekByDayOfWeek(activeWeekIndex, LocalDate.now().getDayOfWeek());
-  }
-
   public void rotateWeek() {
     if (weeks.isEmpty()) {
       return;
@@ -90,6 +82,9 @@ public class Schedule {
   }
 
   public Day getDayByWeekByDayOfWeek(Integer weekIndex, DayOfWeek dayOfWeek) {
+    if (weekIndex == null) {
+      weekIndex = activeWeekIndex;
+    }
     return weeks.get(weekIndex).getDay(dayOfWeek);
   }
 

@@ -41,6 +41,7 @@ public class AddEventUseCase implements UseCase<AddEventCommand, AddEventRespons
       buildEvent(command, event);
     }
     schedule.addEvent(command.weekIndex(), command.dayOfWeek(), event);
+    scheduleRepository.save(schedule);
     return new AddEventResponse(event.getId().value());
   }
 

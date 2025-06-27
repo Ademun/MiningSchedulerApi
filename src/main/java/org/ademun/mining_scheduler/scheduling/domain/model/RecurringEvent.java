@@ -1,5 +1,6 @@
 package org.ademun.mining_scheduler.scheduling.domain.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -15,4 +16,6 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "recurring_event")
 public class RecurringEvent extends Event {
 
+  @Column
+  private RecurrenceType recurrenceType;
 }

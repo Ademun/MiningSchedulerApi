@@ -3,6 +3,7 @@ package org.ademun.mining_scheduler.scheduling.interfaces.rest.controller;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import org.ademun.mining_scheduler.scheduling.application.usecase.CreateSchedule
 import org.ademun.mining_scheduler.scheduling.application.usecase.DeleteScheduleUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.GetEventsUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.GetScheduleUseCase;
-import org.ademun.mining_scheduler.scheduling.application.usecase.GetTodayEventsUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.RemoveEventUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.RemoveWeekUseCase;
 import org.ademun.mining_scheduler.scheduling.application.usecase.command.AddEventCommand;
@@ -31,6 +31,7 @@ import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.GetEv
 import org.ademun.mining_scheduler.scheduling.interfaces.rest.dto.response.GetScheduleResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
@@ -51,7 +53,6 @@ public class ScheduleController {
   private final RemoveWeekUseCase removeWeekUseCase;
   private final GetEventsUseCase getEventsUseCase;
   private final AddEventUseCase addEventUseCase;
-  private final GetTodayEventsUseCase getTodayEventsUseCase;
   private final RemoveEventUseCase removeEventUseCase;
   private final DeleteScheduleUseCase deleteScheduleUseCase;
 
@@ -120,7 +121,9 @@ public class ScheduleController {
 
   @GetMapping("/{scheduleId}/events/today")
   public ResponseEntity<List<GetEventResponse>> getTodayEvents(@PathVariable UUID scheduleId) {
-    List<GetEventResponse> events = getTodayEventsUseCase.execute(scheduleId);
+    GetEventsCommand command = new GetEventsCommand(scheduleId, null,
+        LocalDate.now().getDayOfWeek());
+    List<GetEventResponse> events = getEventsUseCase.execute(command);
     return ResponseEntity.ok(events);
   }
 

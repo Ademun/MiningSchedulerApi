@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.util.UUID;
 
-public record GetEventsCommand(@NotNull UUID scheduleId, @NotNull Integer weekIndex,
+public record GetEventsCommand(@NotNull UUID scheduleId, Integer weekIndex,
                                @NotNull DayOfWeek dayOfWeek) implements Serializable {
 
 }

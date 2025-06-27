@@ -1,5 +1,6 @@
 package org.ademun.mining_scheduler.scheduling.application.usecase;
 
+import java.util.Comparator;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ademun.mining_scheduler.scheduling.application.usecase.exception.ResourceNotFoundException;
@@ -32,7 +33,7 @@ public class GetScheduleUseCase implements UseCase<UUID, GetScheduleResponse> {
                 .map(event -> new EventDto(event.getId().value(), event.getTitle(),
                     event.getDescription(), event.getTimePeriod().start(),
                     event.getTimePeriod().end()))
-                .toList()))
+                .toList())).sorted(Comparator.comparing(DayDto::dayOfWeek))
             .toList()))
         .toList());
   }

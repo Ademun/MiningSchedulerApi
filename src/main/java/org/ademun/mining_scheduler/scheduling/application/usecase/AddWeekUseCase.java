@@ -7,7 +7,6 @@ import org.ademun.mining_scheduler.scheduling.application.usecase.exception.Reso
 import org.ademun.mining_scheduler.scheduling.domain.model.Schedule;
 import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleId;
 import org.ademun.mining_scheduler.scheduling.domain.model.ScheduleRepository;
-import org.ademun.mining_scheduler.scheduling.domain.model.Week;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,10 +21,7 @@ public class AddWeekUseCase implements UseCase<UUID, Void> {
     Schedule schedule = scheduleRepository.findById(new ScheduleId(scheduleId))
         .orElseThrow(() -> new ResourceNotFoundException(
             String.format("Schedule with value %s not found", scheduleId)));
-    Week week = new Week();
-    schedule.addWeek(week);
-    System.out.println(week.toString());
-    System.out.println(schedule.toString());
+    schedule.addWeek();
     scheduleRepository.save(schedule);
     return null;
   }
